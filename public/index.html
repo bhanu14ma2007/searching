@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stylish AI Search Engine</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* Navbar */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px 30px;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            backdrop-filter: blur(10px);
+            border-radius: 0 0 15px 15px;
+            z-index: 1000;
+        }
+
+        .nav-buttons .nav-icon {
+            font-size: 22px;
+            cursor: pointer;
+            padding: 10px;
+            transition: 0.3s;
+        }
+
+        .nav-buttons .nav-icon:hover {
+            color: #ff4a4a;
+            transform: scale(1.2);
+        }
+
+        /* Header */
+        h1 {
+            font-size: 45px;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-top: 100px;
+            background: linear-gradient(90deg, #f8050d, #5a68ec);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: glow 1.5s infinite alternate;
+        }
+
+        @keyframes glow {
+            from { text-shadow: 0 0 10px #fff; }
+            to { text-shadow: 0 0 20px #ff4a4a; }
+        }
+
+        /* Search Box */
+        .search-box {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            width: 60%;
+            margin: auto;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 15px;
+            font-size: 18px;
+            border-radius: 25px;
+            border: 2px solid #ff4a4a;
+            outline: none;
+            background: rgba(255, 255, 255, 0.2);
+            color: #da4747;
+            text-align: center;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .search-box input::placeholder {
+            color: #1a42f1;
+        }
+
+        .search-box input:focus {
+            background: rgba(255, 255, 255, 0.3);
+            box-shadow: 0 0 20px #ff4a4a;
+        }
+
+        .search-box .search-icon {
+            position: absolute;
+            right: 15px;
+            font-size: 22px;
+            color: #ff4a4a;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .search-box .search-icon:hover {
+            transform: scale(1.2);
+        }
+
+        /* Results */
+        #results {
+            margin-top: 20px;
+            width: 60%;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .result {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+            margin-bottom: 10px;
+            transition: transform 0.3s, box-shadow 0.3s;
+            backdrop-filter: blur(10px);
+            color: white;
+            cursor: pointer;
+        }
+
+        .result:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 15px #ff4a4a;
+        }
+
+        .result a {
+            text-decoration: none;
+            color: #ff4a4a;
+            font-weight: bold;
+        }
+        body {
+            background: linear-gradient(45deg, rgb(245, 137, 137), rgb(238, 179, 70), rgb(241, 241, 63), rgb(90, 233, 90), rgb(103, 103, 235), rgb(205, 135, 255), rgb(247, 156, 247));
+            background-size: 400% 400%;
+            animation: gradientAnimation 10s ease infinite;
+            font-family: 'Times New Roman', Times, serif;
+        }
+
+        @keyframes gradientAnimation {
+            0% {background-position: 0% 50%;}
+            50% {background-position: 100% 50%;}
+            100% {background-position: 0% 50%;}
+        }
+
+        .header {
+            background-color: aquamarine;
+        }
+
+        h1 {
+            color: blue;
+        }
+
+        .nav-links a {
+            color: black;
+        }
+
+        .search-bar input {
+            border: 1px solid black;
+        }
+
+        .animated-image {
+            border: 2px solid black;
+        }
+
+        .image-caption {
+            color: #333;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <div class="nav-buttons">
+            <span class="nav-icon" onclick="window.history.back()"><i class="fas fa-arrow-left"></i></span>
+            <span class="nav-icon" onclick="location.reload()"><i class="fas fa-sync-alt"></i></span>
+            <span class="nav-icon" onclick="window.history.forward()"><i class="fas fa-arrow-right"></i></span>
+        </div>
+    </div>
+
+    <h1 align="center">🚀 AI-Powered Search 🚀</h1>
+    
+    <div class="search-box">
+        <input type="text" id="searchBox" placeholder="Search anything..." onkeyup="fetchResults(event)">
+        <span class="search-icon" onclick="fetchResults(event)"><i class="fas fa-search"></i></span>
+    </div>
+
+    <div id="results"></div>
+<script>
+    function fetchResults(event) {
+        if (event.key === "Enter" || event.type === "click") {
+            let query = document.getElementById("searchBox").value.trim().toLowerCase();
+            let resultsDiv = document.getElementById("results");
+    
+            if (query.length < 1){
+                resultsDiv.innerHTML = "<p style='color: red;'>Please enter a search query.</p>";
+                return;
+            }
+    
+            resultsDiv.innerHTML = "<p style='color: yellow;'>Searching...</p>";
+    
+            fetch("http://127.0.0.1:5000/search?q=" + query)            // Flask Backend
+                .then(response => response.json())
+                .then(data => {
+                    resultsDiv.innerHTML = "";
+                    if (data.length === 0) {
+                        resultsDiv.innerHTML = `<p style='color: red;'>No results found for "${query}"</p>`;
+                        return;
+                    }
+    
+                    data.forEach(item => {
+                        resultsDiv.innerHTML += `
+                            <div class="result">
+                                <h3>${item.title}</h3>
+                                <p>${item.description}</p>
+                                <a href="${item.url}" target="_blank">Visit Link</a>
+                            </div>`;
+                    });
+                })
+                .catch(error => {
+                    resultsDiv.innerHTML = "<p style='color: red;'>Error fetching results. Please try again.</p>";
+                    console.error("Error fetching results:", error);
+                });
+        }
+    }
+    </script>
+</body>
+</html>
