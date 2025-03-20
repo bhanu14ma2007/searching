@@ -194,7 +194,7 @@
     
             resultsDiv.innerHTML = "<p style='color: yellow;'>Searching...</p>";
     
-            fetch("http://127.0.0.1:5000/search?q=" + query)            // Flask Backend
+            fetch("https://searching-nkmt.onrender.com/search?q=google"+ query)            // Flask Backend
                 .then(response => response.json())
                 .then(data => {
                     resultsDiv.innerHTML = "";
